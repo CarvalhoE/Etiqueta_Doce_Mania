@@ -6,6 +6,7 @@
   <title>Etiquetas da Doceria</title>
   <link rel="stylesheet" href="/css/style.css">
   <script src="/vendor/jspdf/jspdf.umd.min.js"></script>
+  <script src="/vendor/html2canvas.min.js"></script>
 </head>
 <body>
 
@@ -129,7 +130,14 @@
                 <option value="48">48 mm</option>
               </select>
             </div>
-            <button class="btn prim" id="exportar" type="button">Exportar PDF</button>
+            <div class="larg formato-exportacao">
+              <label for="formatoExportacao">Formato</label>
+              <select id="formatoExportacao">
+                <option value="pdf">PDF</option>
+                <option value="png">PNG</option>
+              </select>
+            </div>
+            <button class="btn prim" id="exportar" type="button">Exportar</button>
             <button class="btn sec" id="imprimir" type="button">Imprimir</button>
           </div>
         </div>
@@ -220,9 +228,17 @@
       </div>
 
       <div class="modal-acoes" id="acoesNormais">
-        <button type="button" class="btn prim" id="modalExportar">Exportar PDF</button>
+        <button type="button" class="btn sec" id="modalImprimir">Imprimir</button>
         <button type="button" class="btn sec" id="modalAlterar">Alterar dados</button>
         <button type="button" class="btn perigo" id="modalApagar">Apagar</button>
+        <div class="larg formato-exportacao">
+          <label for="modalFormato">Formato</label>
+          <select id="modalFormato">
+            <option value="pdf">PDF</option>
+            <option value="png">PNG</option>
+          </select>
+        </div>
+        <button type="button" class="btn prim" id="modalExportar">Exportar</button>
       </div>
 
       <div class="modal-acoes" id="acoesConfirma" hidden>

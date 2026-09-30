@@ -1,8 +1,9 @@
-import { $, $$, esc, agoraLocal, toast } from './utils.js';
+import { $, $$, esc, agoraLocal, toast, imprimirTicket } from './utils.js';
 import { api } from './api.js';
 import { empresa } from './empresa.js';
 import { renderTicket } from './ticket.js';
 import { exportarPDF } from './pdf.js';
+import { exportarPNG } from './png.js';
 
 let pedidoId = null; // preenchido depois de salvar (ou ao editar do histórico)
 
@@ -116,7 +117,11 @@ async function exportar() {
   const erro = validar(p);
   if (erro) return toast(erro);
   try {
-    await exportarPDF(p, empresa, parseInt($('#largura').value));
+    if ($('#formatoExportacao').value === 'png') {
+      await exportarPNG($('#ticket'), p, parseInt($('#largura').value));
+    } else {
+      await exportarPDF(p, empresa, parseInt($('#largura').value));
+    }
   } catch (e) {
     toast(e.message);
   }
@@ -125,30 +130,7 @@ async function exportar() {
 function imprimir() {
   const erro = validar(lerPedido());
   if (erro) return toast(erro);
-
-  const largura = parseInt($('#largura').value);
-  const estilo = document.createElement('style');
-  estilo.media = 'print';
-  estilo.textContent = `
-    @page { size: ${largura}mm auto; margin: 0; }
-    body.imprimindo-ticket { margin: 0; background: #fff; }
-    body.imprimindo-ticket * { visibility: hidden !important; }
-    body.imprimindo-ticket #ticket,
-    body.imprimindo-ticket #ticket * { visibility: visible !important; }
-    body.imprimindo-ticket .prev-fundo { display: block; padding: 0; overflow: visible; }
-    body.imprimindo-ticket #ticket {
-      position: fixed; top: 0; left: 0; width: ${largura}mm !important;
-      box-shadow: none;
-    }
-  `;
-  const finalizar = () => {
-    document.body.classList.remove('imprimindo-ticket');
-    estilo.remove();
-  };
-  window.addEventListener('afterprint', finalizar, { once: true });
-  document.head.appendChild(estilo);
-  document.body.classList.add('imprimindo-ticket');
-  window.print();
+  imprimirTicket('#ticket', parseInt($('#largura').value));
 }
 
 export function iniciarCriar() {

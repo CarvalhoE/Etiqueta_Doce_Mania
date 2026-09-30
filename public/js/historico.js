@@ -1,8 +1,9 @@
-import { $, $$, esc, brl, fmtDT, toast, isoData, somarDias, rotuloDia } from './utils.js';
+import { $, $$, esc, brl, fmtDT, toast, isoData, somarDias, rotuloDia, imprimirTicket } from './utils.js';
 import { api } from './api.js';
 import { empresa } from './empresa.js';
 import { renderTicket } from './ticket.js';
 import { exportarPDF } from './pdf.js';
+import { exportarPNG } from './png.js';
 import { carregarPedido } from './criar.js';
 
 const estado = {
@@ -134,10 +135,18 @@ function abrirPedido(id) {
 
 async function exportar() {
   try {
-    await exportarPDF(estado.atual, empresa, parseInt($('#modalLargura').value));
+    if ($('#modalFormato').value === 'png') {
+      await exportarPNG($('#modalTicket'), estado.atual, parseInt($('#modalLargura').value));
+    } else {
+      await exportarPDF(estado.atual, empresa, parseInt($('#modalLargura').value));
+    }
   } catch (e) {
     toast(e.message);
   }
+}
+
+function imprimir() {
+  imprimirTicket('#modalTicket', parseInt($('#modalLargura').value));
 }
 
 function alterar() {
@@ -188,6 +197,7 @@ export function iniciarHistorico() {
   modal.addEventListener('click', e => { if (e.target === modal) modal.close(); }); // clique fora
   $('#modalLargura').addEventListener('change', renderModal);
   $('#modalExportar').addEventListener('click', exportar);
+  $('#modalImprimir').addEventListener('click', imprimir);
   $('#modalAlterar').addEventListener('click', alterar);
   $('#modalApagar').addEventListener('click', () => mostrarConfirmacao(true));
   $('#modalCancelarApagar').addEventListener('click', () => mostrarConfirmacao(false));

@@ -9,6 +9,33 @@ export function esc(s) {
     ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 }
 
+export function imprimirTicket(seletor, largura) {
+  if (!$(seletor)) return;
+
+  const estilo = document.createElement('style');
+  estilo.media = 'print';
+  estilo.textContent = `
+    @page { size: ${largura}mm auto; margin: 0; }
+    body.imprimindo-ticket { margin: 0; background: #fff; }
+    body.imprimindo-ticket * { visibility: hidden !important; }
+    body.imprimindo-ticket ${seletor},
+    body.imprimindo-ticket ${seletor} * { visibility: visible !important; }
+    body.imprimindo-ticket .prev-fundo { display: block; padding: 0; overflow: visible; }
+    body.imprimindo-ticket ${seletor} {
+      position: fixed; top: 0; left: 0; width: ${largura}mm !important;
+      box-shadow: none;
+    }
+  `;
+  const finalizar = () => {
+    document.body.classList.remove('imprimindo-ticket');
+    estilo.remove();
+  };
+  window.addEventListener('afterprint', finalizar, { once: true });
+  document.head.appendChild(estilo);
+  document.body.classList.add('imprimindo-ticket');
+  window.print();
+}
+
 /** '2026-09-29T14:30' -> '29/09/2026 14:30' */
 export function fmtDT(v) {
   if (!v) return '-';

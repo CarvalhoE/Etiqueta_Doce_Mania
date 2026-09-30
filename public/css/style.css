@@ -175,6 +175,8 @@ input:focus, select:focus { outline: 2px solid var(--rosa); border-color: transp
 .acoes { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 20px; align-items: end; }
 .acoes .larg { width: 150px; }
 .acoes .larg label { margin-top: 0; }
+.formato-exportacao { width: 110px; }
+.formato-exportacao label { margin-top: 0; }
 
 details { margin-top: 16px; border-top: 1px dashed var(--borda); padding-top: 10px; }
 summary { cursor: pointer; font-size: 13px; font-weight: 600; color: var(--rosa-esc); }
