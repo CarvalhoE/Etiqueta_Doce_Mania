@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Etiquetas da Doceria</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <script src="/vendor/jspdf/jspdf.umd.min.js"></script>
+</head>
+<body>
+
+  <nav class="navbar">
+    <div class="marca">
+      <img id="navLogo" alt="" hidden>
+      <span id="navNome">Doceria</span>
+    </div>
+    <button type="button" data-view="criar" class="ativo">Criar Pedido</button>
+    <button type="button" data-view="historico">Histórico de Pedidos</button>
+  </nav>
+
+  <main>
+    <!-- CRIAR PEDIDO -->
+    <section id="view-criar" class="view ativa">
+      <div class="grid">
+        <div class="card">
+          <h2>Novo pedido <span id="badgeEdicao" class="badge" hidden></span></h2>
+
+          <details>
+            <summary>Logo e nome da empresa</summary>
+            <label for="empNome">Nome da empresa</label>
+            <input id="empNome" maxlength="80" placeholder="Ex.: Doce Sabor">
+            <label for="empLogo">Logo (PNG ou JPG)</label>
+            <input id="empLogo" type="file" accept="image/png,image/jpeg">
+            <button class="btn sec mt" id="removerLogo" type="button">Remover logo</button>
+          </details>
+
+          <label for="cliente">Nome da cliente</label>
+          <input id="cliente" maxlength="120" placeholder="Nome da cliente">
+
+          <div class="linha2">
+            <div>
+              <label for="dtPedido">Data e horário do pedido</label>
+              <input id="dtPedido" type="datetime-local">
+            </div>
+            <div>
+              <label for="dtEntrega">Data e horário da entrega</label>
+              <input id="dtEntrega" type="datetime-local">
+            </div>
+          </div>
+
+          <h3>Itens</h3>
+          <div class="item cab-itens"><span>Item</span><span>Qtd</span><span>Valor unit.</span><span></span></div>
+          <div id="itens"></div>
+          <button class="btn sec" id="addItem" type="button">+ Adicionar item</button>
+
+          <div class="acoes">
+            <button class="btn sec" id="limpar" type="button">Novo pedido</button>
+            <button class="btn sec" id="salvar" type="button">Salvar pedido</button>
+            <div class="larg">
+              <label for="largura">Largura da bobina</label>
+              <select id="largura">
+                <option value="80">80 mm</option>
+                <option value="48">48 mm</option>
+              </select>
+            </div>
+            <button class="btn prim" id="exportar" type="button">Exportar PDF</button>
+          </div>
+        </div>
+
+        <div class="prev-wrap">
+          <div class="card">
+            <h2>Pré-visualização</h2>
+            <div class="prev-fundo"><div id="ticket" class="ticket w80"></div></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- HISTÓRICO DE PEDIDOS -->
+    <section id="view-historico" class="view">
+      <div class="card">
+        <div class="hist-cab">
+          <h2>Histórico de Pedidos</h2>
+          <div id="histResumo" class="resumo"></div>
+        </div>
+
+        <div class="chips" id="chipsPeriodo">
+          <button type="button" class="chip" data-periodo="hoje">Hoje</button>
+          <button type="button" class="chip" data-periodo="amanha">Amanhã</button>
+          <button type="button" class="chip" data-periodo="semana">Esta semana</button>
+          <button type="button" class="chip ativo" data-periodo="mes">Este mês</button>
+          <button type="button" class="chip" data-periodo="todos">Todos</button>
+        </div>
+
+        <div class="filtros">
+          <div>
+            <label for="fCampo">Filtrar pela</label>
+            <select id="fCampo">
+              <option value="pedido">Data do pedido</option>
+              <option value="entrega">Data da entrega</option>
+            </select>
+          </div>
+          <div>
+            <label for="fDe">De</label>
+            <input id="fDe" type="date">
+          </div>
+          <div>
+            <label for="fAte">Até</label>
+            <input id="fAte" type="date">
+          </div>
+          <div class="busca">
+            <label for="fBusca">Cliente</label>
+            <input id="fBusca" type="search" placeholder="Buscar pelo nome">
+          </div>
+        </div>
+
+        <div class="tabela-wrap">
+          <table class="tabela">
+            <thead>
+              <tr>
+                <th class="col-num">Nº</th>
+                <th>Cliente</th>
+                <th>Pedido</th>
+                <th>Entrega</th>
+                <th class="col-dir">Qtd</th>
+                <th class="col-dir">Total</th>
+              </tr>
+            </thead>
+            <tbody id="tabelaPedidos"></tbody>
+          </table>
+        </div>
+        <div id="histVazio" class="vazio" hidden></div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Popup do ticket -->
+  <dialog id="modalPedido" aria-labelledby="modalTitulo">
+    <div class="modal-cab">
+      <h2 id="modalTitulo">Pedido</h2>
+      <button type="button" class="fechar" id="modalFechar" aria-label="Fechar">✕</button>
+    </div>
+
+    <div class="prev-fundo"><div id="modalTicket" class="ticket w80"></div></div>
+
+    <div class="modal-rodape">
+      <div class="larg">
+        <label for="modalLargura">Largura da bobina</label>
+        <select id="modalLargura">
+          <option value="80">80 mm</option>
+          <option value="48">48 mm</option>
+        </select>
+      </div>
+
+      <div class="modal-acoes" id="acoesNormais">
+        <button type="button" class="btn prim" id="modalExportar">Exportar PDF</button>
+        <button type="button" class="btn sec" id="modalAlterar">Alterar dados</button>
+        <button type="button" class="btn perigo" id="modalApagar">Apagar</button>
+      </div>
+
+      <div class="modal-acoes" id="acoesConfirma" hidden>
+        <span class="aviso-apagar">Apagar este pedido?</span>
+        <button type="button" class="btn perigo cheio" id="modalConfirmarApagar">Sim, apagar</button>
+        <button type="button" class="btn sec" id="modalCancelarApagar">Cancelar</button>
+      </div>
+    </div>
+  </dialog>
+
+  <div id="toast" role="status" aria-live="polite"></div>
+
+  <script type="module" src="/js/app.js"></script>
+</body>
+</html>

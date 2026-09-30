@@ -1,0 +1,258 @@
+:root {
+  --rosa: #d6336c;
+  --rosa-esc: #b02456;
+  --rosa-claro: #fff0f5;
+  --texto: #3b2a30;
+  --texto-suave: #8a6b75;
+  --borda: #f0d4de;
+  --fundo: #fff8fa;
+  --branco: #fff;
+}
+
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+
+body {
+  margin: 0;
+  font-family: "Segoe UI", system-ui, sans-serif;
+  background: var(--fundo);
+  color: var(--texto);
+}
+
+/* ---------- Navbar ---------- */
+.navbar {
+  background: var(--rosa);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 20px;
+  height: 56px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, .12);
+}
+.navbar .marca {
+  font-weight: 700;
+  font-size: 18px;
+  margin-right: 24px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.navbar .marca img {
+  height: 32px;
+  width: 32px;
+  object-fit: contain;
+  background: #fff;
+  border-radius: 50%;
+}
+.navbar button {
+  background: transparent;
+  border: 0;
+  color: #fff;
+  font-size: 15px;
+  padding: 0 16px;
+  height: 56px;
+  cursor: pointer;
+  opacity: .85;
+  border-bottom: 3px solid transparent;
+}
+.navbar button:hover { opacity: 1; }
+.navbar button.ativo { opacity: 1; border-bottom-color: #fff; font-weight: 600; }
+
+/* ---------- Layout ---------- */
+main { max-width: 1150px; margin: 24px auto; padding: 0 16px; }
+.view { display: none; }
+.view.ativa { display: block; }
+.grid { display: grid; grid-template-columns: 1.2fr 1fr; gap: 24px; align-items: start; }
+@media (max-width: 860px) { .grid { grid-template-columns: 1fr; } }
+
+.card {
+  background: var(--branco);
+  border: 1px solid var(--borda);
+  border-radius: 12px;
+  padding: 20px;
+}
+h2 { margin: 0 0 16px; font-size: 20px; color: var(--rosa-esc); }
+h3 { margin: 20px 0 10px; font-size: 15px; color: var(--rosa-esc); }
+.badge {
+  font-size: 12px;
+  font-weight: 600;
+  background: var(--rosa-claro);
+  border: 1px solid var(--borda);
+  border-radius: 999px;
+  padding: 2px 10px;
+  margin-left: 8px;
+  vertical-align: middle;
+}
+.mt { margin-top: 8px; }
+
+/* ---------- Formulário ---------- */
+label { display: block; font-size: 13px; font-weight: 600; margin: 12px 0 4px; }
+input, select {
+  width: 100%;
+  padding: 9px 10px;
+  border: 1px solid var(--borda);
+  border-radius: 8px;
+  font-size: 14px;
+  font-family: inherit;
+  background: #fff;
+}
+input:focus, select:focus { outline: 2px solid var(--rosa); border-color: transparent; }
+.linha2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+.item { display: grid; grid-template-columns: 1fr 70px 100px 34px; gap: 8px; margin-bottom: 8px; }
+.item .rem {
+  background: #fde8ee;
+  color: var(--rosa-esc);
+  border: 0;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 16px;
+}
+.cab-itens { font-size: 12px; font-weight: 600; color: var(--texto-suave); margin-bottom: 4px; }
+
+.btn {
+  padding: 10px 16px;
+  border: 0;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+}
+.btn:disabled { opacity: .6; cursor: wait; }
+.btn.prim { background: var(--rosa); color: #fff; }
+.btn.prim:hover:not(:disabled) { background: var(--rosa-esc); }
+.btn.sec { background: var(--rosa-claro); color: var(--rosa-esc); border: 1px solid var(--borda); }
+
+.acoes { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 20px; align-items: end; }
+.acoes .larg { width: 150px; }
+.acoes .larg label { margin-top: 0; }
+
+details { margin-top: 16px; border-top: 1px dashed var(--borda); padding-top: 10px; }
+summary { cursor: pointer; font-size: 13px; font-weight: 600; color: var(--rosa-esc); }
+
+/* ---------- Pré-visualização do ticket ---------- */
+.prev-wrap { position: sticky; top: 16px; }
+.prev-fundo {
+  background: #e9e2e5;
+  border-radius: 10px;
+  padding: 20px;
+  display: flex;
+  justify-content: center;
+  overflow: auto;
+}
+.ticket {
+  background: #fff;
+  font-family: "Courier New", monospace;
+  color: #000;
+  padding: 14px 12px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, .2);
+  font-size: 12px;
+  line-height: 1.35;
+}
+.ticket.w80 { width: 302px; }
+.ticket.w48 { width: 181px; font-size: 10px; padding: 10px 8px; }
+.ticket .centro { text-align: center; }
+.ticket .logo { max-width: 60%; max-height: 70px; object-fit: contain; display: block; margin: 0 auto 4px; }
+.ticket .nome { font-weight: 700; font-size: 1.25em; text-align: center; margin-bottom: 6px; }
+.ticket hr { border: 0; border-top: 1px dashed #000; margin: 7px 0; }
+.ticket .it { display: grid; grid-template-columns: 1fr 26px 62px; gap: 4px; }
+.ticket.w48 .it { grid-template-columns: 1fr 20px 48px; }
+.ticket .it span:nth-child(2) { text-align: center; }
+.ticket .it span:nth-child(3) { text-align: right; }
+.ticket .cab { font-weight: 700; }
+.ticket .tot { display: flex; justify-content: space-between; font-weight: 700; font-size: 1.15em; }
+.ticket .vazio-itens { text-align: center; opacity: .5; }
+
+/* ---------- Aviso e estado vazio ---------- */
+#toast {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--texto);
+  color: #fff;
+  padding: 10px 20px;
+  border-radius: 8px;
+  opacity: 0;
+  transition: opacity .3s;
+  pointer-events: none;
+}
+#toast.on { opacity: 1; }
+.vazio { color: var(--texto-suave); text-align: center; padding: 40px 0; }
+
+/* ---------- Histórico ---------- */
+.hist-cab { display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: 8px; }
+.hist-cab h2 { margin-bottom: 12px; }
+.resumo { font-size: 14px; color: var(--texto-suave); }
+.resumo strong { color: var(--rosa-esc); }
+
+.chips { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 4px; }
+.chip {
+  padding: 6px 14px;
+  border-radius: 999px;
+  border: 1px solid var(--borda);
+  background: #fff;
+  color: var(--texto);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+}
+.chip:hover { background: var(--rosa-claro); }
+.chip.ativo { background: var(--rosa); border-color: var(--rosa); color: #fff; }
+
+.filtros { display: grid; grid-template-columns: 170px 150px 150px 1fr; gap: 12px; margin-bottom: 16px; }
+@media (max-width: 860px) { .filtros { grid-template-columns: 1fr 1fr; } }
+
+.tabela-wrap { overflow-x: auto; }
+.tabela { width: 100%; border-collapse: collapse; font-size: 14px; }
+.tabela th {
+  text-align: left;
+  font-size: 12px;
+  color: var(--texto-suave);
+  padding: 8px 10px;
+  border-bottom: 2px solid var(--borda);
+  white-space: nowrap;
+}
+.tabela td { padding: 10px; border-bottom: 1px solid var(--borda); white-space: nowrap; }
+.tabela .col-num { width: 60px; }
+.tabela .col-dir { text-align: right; }
+.tabela td.cliente { white-space: normal; font-weight: 600; }
+.tabela tr.linha { cursor: pointer; }
+.tabela tr.linha:hover, .tabela tr.linha:focus { background: var(--rosa-claro); outline: none; }
+.tabela tr.grupo td {
+  background: var(--rosa-claro);
+  color: var(--rosa-esc);
+  font-weight: 700;
+  border-bottom: 1px solid var(--borda);
+  padding: 8px 10px;
+}
+.tabela tr.grupo .grupo-info { float: right; font-weight: 600; color: var(--texto-suave); }
+
+/* ---------- Popup ---------- */
+dialog#modalPedido {
+  border: 0;
+  border-radius: 14px;
+  padding: 20px;
+  width: min(460px, 94vw);
+  max-height: 92vh;
+  overflow: auto;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, .3);
+  color: var(--texto);
+}
+dialog#modalPedido::backdrop { background: rgba(59, 42, 48, .55); }
+.modal-cab { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+.modal-cab h2 { margin: 0; }
+.fechar { border: 0; background: transparent; font-size: 20px; cursor: pointer; color: var(--texto-suave); padding: 4px 8px; }
+.fechar:hover { color: var(--rosa-esc); }
+.modal-rodape { margin-top: 16px; display: flex; flex-direction: column; gap: 14px; }
+.modal-rodape .larg { width: 150px; }
+.modal-rodape .larg label { margin-top: 0; }
+.modal-acoes { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+.btn.perigo { background: #fff; color: #b3261e; border: 1px solid #f0c4c0; }
+.btn.perigo:hover { background: #fdecea; }
+.btn.perigo.cheio { background: #b3261e; color: #fff; border-color: #b3261e; }
+.btn.perigo.cheio:hover { background: #8c1d18; }
+.aviso-apagar { font-weight: 600; color: #b3261e; }

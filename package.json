@@ -1,0 +1,19 @@
+{
+  "name": "doceria-etiquetas",
+  "version": "1.0.0",
+  "description": "Etiquetas de pedidos para doceria",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js",
+    "test": "node --test"
+  },
+  "dependencies": {
+    "better-sqlite3": "^13.0.3",
+    "express": "^5.2.1"
+  },
+  "private": true,
+  "engines": {
+    "node": ">=18"
+  }
+}
