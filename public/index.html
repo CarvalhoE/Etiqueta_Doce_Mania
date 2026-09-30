@@ -14,11 +14,77 @@
       <img id="navLogo" alt="" hidden>
       <span id="navNome">Doceria</span>
     </div>
-    <button type="button" data-view="criar" class="ativo">Criar Pedido</button>
+    <button type="button" data-view="inicio" class="ativo">Visão geral</button>
+    <button type="button" data-view="criar">Criar Pedido</button>
     <button type="button" data-view="historico">Histórico de Pedidos</button>
   </nav>
 
   <main>
+    <!-- VISÃO GERAL -->
+    <section id="view-inicio" class="view ativa">
+      <div class="dash-cab">
+        <div>
+          <p class="dash-sobretitulo">ACOMPANHAMENTO DE VENDAS</p>
+          <h1>Visão geral</h1>
+        </div>
+        <form id="graficoFiltros" class="graficos-filtros">
+          <div>
+            <label for="graficoDe">De</label>
+            <input id="graficoDe" type="month" required>
+          </div>
+          <span class="filtro-ate">até</span>
+          <div>
+            <label for="graficoAte">Até</label>
+            <input id="graficoAte" type="month" required>
+          </div>
+          <button class="btn prim" type="submit">Atualizar</button>
+        </form>
+      </div>
+
+      <p id="graficoErro" class="grafico-erro" role="status" hidden></p>
+
+      <div class="dash-indicadores" aria-label="Totais do período">
+        <div class="dash-indicador indicador-pedidos">
+          <span>Pedidos no período</span>
+          <strong id="totalPedidos">0</strong>
+        </div>
+        <div class="dash-indicador indicador-valor">
+          <span>Valor em pedidos</span>
+          <strong id="totalVendas">R$ 0,00</strong>
+        </div>
+      </div>
+
+      <p id="graficoVazio" class="grafico-vazio" hidden>Nenhum pedido no período selecionado.</p>
+
+      <div class="graficos-grid">
+        <section class="card painel-grafico" aria-labelledby="tituloGraficoPedidos">
+          <div class="grafico-cab">
+            <div>
+              <h2 id="tituloGraficoPedidos">Pedidos por mês</h2>
+              <p id="periodoPedidos" class="grafico-periodo"></p>
+            </div>
+            <span class="grafico-chave chave-pedidos" aria-hidden="true"></span>
+          </div>
+          <div class="grafico-scroll">
+            <svg id="graficoPedidos" role="img" aria-label="Quantidade de pedidos por mês"></svg>
+          </div>
+        </section>
+
+        <section class="card painel-grafico" aria-labelledby="tituloGraficoVendas">
+          <div class="grafico-cab">
+            <div>
+              <h2 id="tituloGraficoVendas">Valor dos pedidos por mês</h2>
+              <p id="periodoVendas" class="grafico-periodo"></p>
+            </div>
+            <span class="grafico-chave chave-vendas" aria-hidden="true"></span>
+          </div>
+          <div class="grafico-scroll">
+            <svg id="graficoVendas" role="img" aria-label="Valor total dos pedidos em reais por mês"></svg>
+          </div>
+        </section>
+      </div>
+    </section>
+
     <!-- CRIAR PEDIDO -->
     <section id="view-criar" class="view ativa">
       <div class="grid">
@@ -64,6 +130,7 @@
               </select>
             </div>
             <button class="btn prim" id="exportar" type="button">Exportar PDF</button>
+            <button class="btn sec" id="imprimir" type="button">Imprimir</button>
           </div>
         </div>
 

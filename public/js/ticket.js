@@ -10,7 +10,7 @@ export function ticketHTML(pedido, empresa) {
 
   return `
     ${empresa.logo ? `<img class="logo" src="${empresa.logo}" alt="">` : ''}
-    <div class="nome">${esc(empresa.nome || 'Doceria')}</div>
+    <div class="nome">${esc(empresa.nome || 'Empresa')}</div>
     <hr>
     <div><b>Cliente:</b> ${esc(pedido.cliente || '-')}</div>
     <div><b>Pedido:</b> ${fmtDT(pedido.pedidoEm)}</div>

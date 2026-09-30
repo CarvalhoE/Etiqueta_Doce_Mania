@@ -2,13 +2,13 @@ import { $, toast } from './utils.js';
 import { api } from './api.js';
 
 /** Dados da empresa em memória (fonte da verdade é o banco). */
-export const empresa = { nome: 'Minha Doceria', logo: '' };
+export const empresa = { nome: 'Minha Empresa', logo: '' };
 
 let aoMudar = () => {};
 
 function aplicar() {
   $('#empNome').value = empresa.nome;
-  $('#navNome').textContent = empresa.nome || 'Doceria';
+  $('#navNome').textContent = empresa.nome || 'Empresa';
   const img = $('#navLogo');
   if (empresa.logo) { img.src = empresa.logo; img.hidden = false; } else { img.hidden = true; }
   aoMudar();
@@ -35,7 +35,7 @@ export async function iniciarEmpresa(callbackMudanca) {
   let timer;
   $('#empNome').addEventListener('input', e => {
     empresa.nome = e.target.value;
-    $('#navNome').textContent = empresa.nome || 'Doceria';
+    $('#navNome').textContent = empresa.nome || 'Empresa';
     aoMudar();
     clearTimeout(timer);
     timer = setTimeout(() => { if (empresa.nome.trim()) persistir(); }, 500);

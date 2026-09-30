@@ -122,11 +122,41 @@ async function exportar() {
   }
 }
 
+function imprimir() {
+  const erro = validar(lerPedido());
+  if (erro) return toast(erro);
+
+  const largura = parseInt($('#largura').value);
+  const estilo = document.createElement('style');
+  estilo.media = 'print';
+  estilo.textContent = `
+    @page { size: ${largura}mm auto; margin: 0; }
+    body.imprimindo-ticket { margin: 0; background: #fff; }
+    body.imprimindo-ticket * { visibility: hidden !important; }
+    body.imprimindo-ticket #ticket,
+    body.imprimindo-ticket #ticket * { visibility: visible !important; }
+    body.imprimindo-ticket .prev-fundo { display: block; padding: 0; overflow: visible; }
+    body.imprimindo-ticket #ticket {
+      position: fixed; top: 0; left: 0; width: ${largura}mm !important;
+      box-shadow: none;
+    }
+  `;
+  const finalizar = () => {
+    document.body.classList.remove('imprimindo-ticket');
+    estilo.remove();
+  };
+  window.addEventListener('afterprint', finalizar, { once: true });
+  document.head.appendChild(estilo);
+  document.body.classList.add('imprimindo-ticket');
+  window.print();
+}
+
 export function iniciarCriar() {
   ['#cliente', '#dtPedido', '#dtEntrega', '#largura'].forEach(s => $(s).addEventListener('input', render));
   $('#addItem').addEventListener('click', () => { novaLinhaItem(); render(); });
   $('#limpar').addEventListener('click', novoPedido);
   $('#salvar').addEventListener('click', salvar);
   $('#exportar').addEventListener('click', exportar);
+  $('#imprimir').addEventListener('click', imprimir);
   novoPedido();
 }
