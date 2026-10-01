@@ -1,6 +1,6 @@
 # Gerenciamento Empresa
 
-Aplicação web para acompanhar pedidos da doceria, gerar tickets para bobinas térmicas e manter os dados salvos em um banco SQLite local. Os tickets podem ser exportados em PDF ou PNG, ou enviados para impressão.
+Aplicação web para acompanhar pedidos, gerar tickets para bobinas térmicas e manter os dados salvos em um banco SQLite local. Os tickets podem ser exportados em PDF ou PNG, ou enviados para impressão.
 
 ## Como rodar
 
