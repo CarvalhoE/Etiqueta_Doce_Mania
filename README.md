@@ -1,6 +1,10 @@
-# Etiquetas da Doceria
+# Gerenciamento Empresa
 
+<<<<<<< HEAD
 Aplicação web para acompanhar pedidos da doceria, gerar tickets para bobinas térmicas e manter os dados salvos em um banco SQLite local. Os tickets podem ser exportados em PDF ou PNG, ou enviados para impressão. O histórico permite imprimir vários pedidos em bobina térmica ou em folha A4, lado a lado.
+=======
+Aplicação web para acompanhar pedidos, gerar tickets para bobinas térmicas e manter os dados salvos em um banco SQLite local. Os tickets podem ser exportados em PDF ou PNG, ou enviados para impressão.
+>>>>>>> e652c5d63fb68e3b438977ae946b20d4ec0a11f9
 
 ## Como rodar
 
