@@ -191,10 +191,21 @@
           </div>
         </div>
 
+        <div class="hist-impressao">
+          <label for="histFormato">Formato de impressão</label>
+          <select id="histFormato">
+            <option value="80">80 mm</option>
+            <option value="48">48 mm</option>
+            <option value="a4">A4 lado a lado</option>
+          </select>
+          <button type="button" class="btn prim" id="imprimirSelecionados">Imprimir selecionados</button>
+        </div>
+
         <div class="tabela-wrap">
           <table class="tabela">
             <thead>
               <tr>
+                <th class="col-selecao"><input id="selecionarTodosPedidos" type="checkbox" aria-label="Selecionar todos os pedidos exibidos"></th>
                 <th class="col-num">Nº</th>
                 <th>Cliente</th>
                 <th>Pedido</th>
@@ -295,6 +306,7 @@
   </dialog>
 
   <div id="toast" role="status" aria-live="polite"></div>
+  <div id="impressaoMultipla" hidden aria-hidden="true"></div>
 
   <script type="module" src="/js/app.js"></script>
 </body>

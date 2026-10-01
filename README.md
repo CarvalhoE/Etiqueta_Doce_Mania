@@ -1,6 +1,6 @@
 # Etiquetas da Doceria
 
-Aplicação web para acompanhar pedidos da doceria, gerar tickets para bobinas térmicas e manter os dados salvos em um banco SQLite local. Os tickets podem ser exportados em PDF ou PNG, ou enviados para impressão.
+Aplicação web para acompanhar pedidos da doceria, gerar tickets para bobinas térmicas e manter os dados salvos em um banco SQLite local. Os tickets podem ser exportados em PDF ou PNG, ou enviados para impressão. O histórico permite imprimir vários pedidos em bobina térmica ou em folha A4, lado a lado.
 
 ## Como rodar
 
@@ -27,7 +27,7 @@ Por padrão, o servidor usa a porta 3000. Para escolher outra porta, defina a va
 
 - **Visão geral:** acompanha a quantidade e o valor dos pedidos por mês, com gráficos e seleção do período analisado.
 - **Criar Pedido:** permite informar cliente, datas, itens e dados da empresa, incluindo uma logo PNG ou JPG. Mostra o ticket em tempo real, permite salvar o pedido e escolher a largura da bobina (80 mm ou 48 mm) e o formato de exportação (PDF ou PNG). Também é possível imprimir o ticket.
-- **Histórico de Pedidos:** exibe os pedidos agrupados por data, com atalhos para Hoje, Amanhã, Esta semana, Este mês ou Todos. Permite filtrar pela data do pedido ou da entrega, definir um período e buscar por cliente. Ao abrir um pedido, é possível alterar os dados, exportar ou imprimir o ticket e apagar o registro.
+- **Histórico de Pedidos:** exibe os pedidos agrupados por data, com atalhos para Hoje, Amanhã, Esta semana, Este mês ou Todos. Permite filtrar pela data do pedido ou da entrega, definir um período e buscar por cliente. É possível selecionar pedidos individualmente ou todos os exibidos e imprimir em bobina de 80 mm ou 48 mm, ou em folha A4 com dois tickets lado a lado. Ao abrir um pedido, também é possível alterar os dados, exportar ou imprimir o ticket e apagar o registro.
 - **Configurações:** disponível apenas para administradores. Permite cadastrar e apagar usuários, definir quais contas são administradoras e consultar a lista de usuários. O administrador principal é protegido e nenhum usuário pode apagar a própria conta. Usuários comuns acessam somente Visão geral, Criar Pedido e Histórico de Pedidos.
 
 ## Estrutura

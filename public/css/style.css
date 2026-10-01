@@ -255,6 +255,10 @@ summary { cursor: pointer; font-size: 13px; font-weight: 600; color: var(--rosa-
 
 .filtros { display: grid; grid-template-columns: 170px 150px 150px 1fr; gap: 12px; margin-bottom: 16px; }
 @media (max-width: 860px) { .filtros { grid-template-columns: 1fr 1fr; } }
+.hist-impressao { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+.hist-impressao label { margin: 0; }
+.hist-impressao select { width: auto; }
+@media (max-width: 520px) { .hist-impressao { flex-wrap: wrap; } }
 
 .tabela-wrap { overflow-x: auto; }
 .tabela { width: 100%; border-collapse: collapse; font-size: 14px; }
@@ -268,6 +272,8 @@ summary { cursor: pointer; font-size: 13px; font-weight: 600; color: var(--rosa-
 }
 .tabela td { padding: 10px; border-bottom: 1px solid var(--borda); white-space: nowrap; }
 .tabela .col-num { width: 60px; }
+.tabela .col-selecao { width: 38px; text-align: center; }
+.tabela .col-selecao input { width: 16px; height: 16px; margin: 0; vertical-align: middle; cursor: pointer; }
 .tabela .col-dir { text-align: right; }
 .tabela td.cliente { white-space: normal; font-weight: 600; }
 .tabela tr.linha { cursor: pointer; }
@@ -280,6 +286,10 @@ summary { cursor: pointer; font-size: 13px; font-weight: 600; color: var(--rosa-
   padding: 8px 10px;
 }
 .tabela tr.grupo .grupo-info { float: right; font-weight: 600; color: var(--texto-suave); }
+
+@media print {
+  body.imprimindo-multiplos { margin: 0; background: #fff; }
+}
 
 /* ---------- Popup ---------- */
 dialog#modalPedido {

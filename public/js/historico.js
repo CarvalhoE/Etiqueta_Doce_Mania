@@ -5,11 +5,13 @@ import { renderTicket } from './ticket.js';
 import { exportarPDF } from './pdf.js';
 import { exportarPNG } from './png.js';
 import { carregarPedido } from './criar.js';
+import { ticketHTML } from './ticket.js';
 
 const estado = {
   periodo: 'mes',   // chip ativo, ou '' quando as datas foram digitadas à mão
   pedidos: [],
   atual: null,      // pedido aberto no popup
+  selecionados: new Set(),
 };
 
 /* ---------- Períodos rápidos ---------- */
@@ -47,6 +49,7 @@ function aplicarPeriodo(periodo) {
 
 /* ---------- Carregar e desenhar a tabela ---------- */
 export async function carregar() {
+  estado.selecionados.clear();
   // Com só uma das datas preenchida, a outra fica aberta
   const de = $('#fDe').value, ate = $('#fAte').value;
   const usarPeriodo = de || ate;
@@ -86,9 +89,10 @@ function desenhar() {
     const soma = pedidos.reduce((s, p) => s + p.total, 0);
     const titulo = dia === 'sem-data' ? 'Sem data de entrega' : rotuloDia(dia);
     const info = `${pedidos.length} pedido${pedidos.length > 1 ? 's' : ''} · ${brl(soma)}`;
-    return `<tr class="grupo"><td colspan="6">${esc(titulo)}<span class="grupo-info">${info}</span></td></tr>` +
+    return `<tr class="grupo"><td colspan="7">${esc(titulo)}<span class="grupo-info">${info}</span></td></tr>` +
       pedidos.map(p => `
         <tr class="linha" data-id="${p.id}" tabindex="0">
+          <td class="col-selecao"><input class="selecao-pedido" type="checkbox" data-id="${p.id}" aria-label="Selecionar pedido #${p.id}" ${estado.selecionados.has(p.id) ? 'checked' : ''}></td>
           <td class="col-num">#${p.id}</td>
           <td class="cliente">${esc(p.cliente)}</td>
           <td>${fmtDT(p.pedidoEm)}</td>
@@ -99,6 +103,10 @@ function desenhar() {
   }).join('');
 
   $('#tabelaPedidos').innerHTML = linhas;
+  const selecionarTodos = $('#selecionarTodosPedidos');
+  const marcadosVisiveis = lista.filter(p => estado.selecionados.has(p.id)).length;
+  selecionarTodos.checked = lista.length > 0 && marcadosVisiveis === lista.length;
+  selecionarTodos.indeterminate = marcadosVisiveis > 0 && marcadosVisiveis < lista.length;
 
   const total = lista.reduce((s, p) => s + p.total, 0);
   $('#histResumo').innerHTML = lista.length
@@ -149,6 +157,57 @@ function imprimir() {
   imprimirTicket('#modalTicket', parseInt($('#modalLargura').value));
 }
 
+function imprimirSelecionados() {
+  const pedidos = estado.pedidos.filter(p => estado.selecionados.has(p.id));
+  if (!pedidos.length) {
+    toast('É necessário selecionar ao menos 1 pedido para impressão.');
+    return;
+  }
+
+  const formato = $('#histFormato').value;
+  const largura = formato === 'a4' ? 80 : parseInt(formato, 10);
+  const area = $('#impressaoMultipla');
+  area.innerHTML = pedidos.map(p => `<div class="ticket w${largura}">${ticketHTML(p, empresa)}</div>`).join('');
+  area.hidden = false;
+
+  const estilo = document.createElement('style');
+  estilo.media = 'print';
+  const regrasFormato = formato === 'a4'
+    ? `
+      @page { size: A4 portrait; margin: 10mm; }
+      body.imprimindo-multiplos #impressaoMultipla {
+        display: grid !important; grid-template-columns: repeat(2, 80mm);
+        justify-content: center; align-content: start; gap: 8mm 10mm; width: 100%;
+      }
+      body.imprimindo-multiplos #impressaoMultipla .ticket {
+        break-inside: avoid; page-break-inside: avoid;
+      }
+    `
+    : `
+      @page { size: ${largura}mm auto; margin: 0; }
+      body.imprimindo-multiplos #impressaoMultipla .ticket { break-after: page; page-break-after: always; }
+      body.imprimindo-multiplos #impressaoMultipla .ticket:last-child { break-after: auto; page-break-after: auto; }
+    `;
+  estilo.textContent = `
+    body.imprimindo-multiplos * { visibility: hidden !important; }
+    body.imprimindo-multiplos #impressaoMultipla,
+    body.imprimindo-multiplos #impressaoMultipla * { visibility: visible !important; }
+    body.imprimindo-multiplos #impressaoMultipla { display: block !important; position: absolute; top: 0; left: 0; }
+    body.imprimindo-multiplos #impressaoMultipla .ticket { box-shadow: none; }
+    ${regrasFormato}
+  `;
+  const finalizar = () => {
+    document.body.classList.remove('imprimindo-multiplos');
+    area.innerHTML = '';
+    area.hidden = true;
+    estilo.remove();
+  };
+  window.addEventListener('afterprint', finalizar, { once: true });
+  document.head.appendChild(estilo);
+  document.body.classList.add('imprimindo-multiplos');
+  window.print();
+}
+
 function alterar() {
   const p = estado.atual;
   $('#modalPedido').close();
@@ -186,11 +245,27 @@ export function iniciarHistorico() {
   $('#fBusca').addEventListener('input', desenhar);
 
   const abrirDaLinha = e => {
+    if (e.target.closest('.selecao-pedido')) return;
     const linha = e.target.closest('tr.linha');
     if (linha) abrirPedido(Number(linha.dataset.id));
   };
   $('#tabelaPedidos').addEventListener('click', abrirDaLinha);
   $('#tabelaPedidos').addEventListener('keydown', e => { if (e.key === 'Enter') abrirDaLinha(e); });
+  $('#tabelaPedidos').addEventListener('change', e => {
+    const checkbox = e.target.closest('.selecao-pedido');
+    if (!checkbox) return;
+    const id = Number(checkbox.dataset.id);
+    if (checkbox.checked) estado.selecionados.add(id);
+    else estado.selecionados.delete(id);
+    desenhar();
+  });
+  $('#selecionarTodosPedidos').addEventListener('change', e => {
+    const busca = semAcento($('#fBusca').value.trim());
+    const visiveis = estado.pedidos.filter(p => !busca || semAcento(p.cliente).includes(busca));
+    visiveis.forEach(p => e.target.checked ? estado.selecionados.add(p.id) : estado.selecionados.delete(p.id));
+    desenhar();
+  });
+  $('#imprimirSelecionados').addEventListener('click', imprimirSelecionados);
 
   const modal = $('#modalPedido');
   $('#modalFechar').addEventListener('click', () => modal.close());
