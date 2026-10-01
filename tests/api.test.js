@@ -9,19 +9,21 @@ process.env.DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), 'doceria-test-'));
 const app = require('../src/app');
 
 let server, base;
+let cookie = '';
 before(async () => {
   await new Promise(r => { server = app.listen(0, r); });
   base = `http://127.0.0.1:${server.address().port}`;
 });
-after(() => {
-  server.close();
+after(async () => {
+  await new Promise(resolve => server.close(resolve));
+  require('../src/db').close();
   fs.rmSync(process.env.DATA_DIR, { recursive: true, force: true });
 });
 
 const api = (rota, opts = {}) =>
   fetch(base + rota, {
     ...opts,
-    headers: { 'Content-Type': 'application/json' },
+    headers: { 'Content-Type': 'application/json', ...(cookie ? { Cookie: cookie } : {}) },
     body: opts.body ? JSON.stringify(opts.body) : undefined,
   });
 
@@ -33,6 +35,114 @@ const pedidoValido = () => ({
     { nome: 'Brigadeiro gourmet', qtd: 20, valor: 3.5 },
     { nome: 'Bolo de pote', qtd: 2, valor: 12.9 },
   ],
+});
+
+test('autenticação: protege a aplicação e libera acesso após login', async () => {
+  let r = await fetch(base + '/api/empresa');
+  assert.equal(r.status, 401);
+
+  r = await fetch(base + '/api/auth/branding');
+  assert.equal(r.status, 200);
+  assert.deepEqual(Object.keys(await r.json()).sort(), ['logo', 'nome']);
+
+  r = await fetch(base, { headers: { Accept: 'text/html' }, redirect: 'manual' });
+  assert.equal(r.status, 302);
+  assert.equal(r.headers.get('location'), '/login');
+
+  r = await api('/api/auth/login', { method: 'POST', body: { username: 'admin', password: 'errada' } });
+  assert.equal(r.status, 401);
+
+  r = await api('/api/auth/login', { method: 'POST', body: { username: 'admin', password: 'admin' } });
+  assert.equal(r.status, 200);
+  assert.match(r.headers.get('set-cookie'), /HttpOnly/);
+  cookie = r.headers.get('set-cookie').split(';')[0];
+
+  r = await api('/api/empresa');
+  assert.equal(r.status, 200);
+});
+
+test('usuários: admins gerenciam contas e usuários comuns não acessam configurações', async () => {
+  const adminCookie = cookie;
+  let r = await api('/api/usuarios');
+  const usuariosIniciais = await r.json();
+  const adminPrincipal = usuariosIniciais.find(usuario => usuario.protegido);
+  assert.ok(adminPrincipal);
+  assert.equal((await api(`/api/usuarios/${adminPrincipal.id}`, { method: 'DELETE' })).status, 409);
+
+  r = await api('/api/usuarios', {
+    method: 'POST', body: { nome: 'operadora', senha: 'senha123', admin: false },
+  });
+  assert.equal(r.status, 201);
+  const operadora = await r.json();
+  assert.equal(operadora.admin, false);
+
+  r = await api('/api/usuarios', {
+    method: 'POST', body: { nome: 'operadora', senha: 'senha123', admin: false },
+  });
+  assert.equal(r.status, 409);
+
+  r = await api('/api/usuarios', {
+    method: 'POST', body: { nome: 'curta', senha: '123', admin: false },
+  });
+  assert.equal(r.status, 400);
+
+  const loginOperadora = await fetch(base + '/api/auth/login', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ username: 'operadora', password: 'senha123' }),
+  });
+  const operadoraCookie = loginOperadora.headers.get('set-cookie').split(';')[0];
+  const cabecalhoOperadora = { Cookie: operadoraCookie };
+  assert.equal(loginOperadora.status, 200);
+
+  r = await fetch(base + '/api/auth/me', { headers: cabecalhoOperadora });
+  assert.equal((await r.json()).admin, false);
+  r = await fetch(base + '/api/usuarios', { headers: cabecalhoOperadora });
+  assert.equal(r.status, 403);
+  r = await fetch(base + `/api/usuarios/${operadora.id}`, {
+    method: 'DELETE', headers: cabecalhoOperadora,
+  });
+  assert.equal(r.status, 403);
+  r = await fetch(base + '/api/usuarios', {
+    method: 'POST',
+    headers: { ...cabecalhoOperadora, 'Content-Type': 'application/json' },
+    body: JSON.stringify({ nome: 'bloqueado', senha: 'senha123', admin: true }),
+  });
+  assert.equal(r.status, 403);
+  r = await fetch(base + '/api/pedidos', { headers: cabecalhoOperadora });
+  assert.equal(r.status, 200);
+
+  r = await api('/api/usuarios', {
+    method: 'POST', body: { nome: 'gestora', senha: 'senha123', admin: true },
+  });
+  assert.equal(r.status, 201);
+  const loginGestora = await fetch(base + '/api/auth/login', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ username: 'gestora', password: 'senha123' }),
+  });
+  const gestoraCookie = loginGestora.headers.get('set-cookie').split(';')[0];
+  assert.equal(loginGestora.status, 200);
+  r = await fetch(base + '/api/usuarios', { headers: { Cookie: gestoraCookie } });
+  assert.equal(r.status, 200);
+  r = await fetch(base + `/api/usuarios/${operadora.id}`, {
+    method: 'DELETE', headers: { Cookie: gestoraCookie },
+  });
+  assert.equal(r.status, 204);
+  r = await fetch(base + `/api/usuarios/${operadora.id}`, {
+    method: 'DELETE', headers: { Cookie: gestoraCookie },
+  });
+  assert.equal(r.status, 404);
+  const gestora = await (await fetch(base + '/api/auth/me', { headers: { Cookie: gestoraCookie } })).json();
+  r = await fetch(base + `/api/usuarios/${gestora.id}`, {
+    method: 'DELETE', headers: { Cookie: gestoraCookie },
+  });
+  assert.equal(r.status, 409);
+  r = await fetch(base + `/api/usuarios/${adminPrincipal.id}`, {
+    method: 'DELETE', headers: { Cookie: gestoraCookie },
+  });
+  assert.equal(r.status, 409);
+  cookie = adminCookie;
 });
 
 test('empresa: lê padrão e atualiza', async () => {
@@ -145,4 +255,9 @@ test('JSON inválido retorna 400 e rota /api desconhecida 404', async () => {
   assert.equal(r.status, 400);
   r = await api('/api/nada');
   assert.equal(r.status, 404);
+
+  r = await api('/api/auth/logout', { method: 'POST' });
+  assert.equal(r.status, 204);
+  r = await api('/api/empresa');
+  assert.equal(r.status, 401);
 });

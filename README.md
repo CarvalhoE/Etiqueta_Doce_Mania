@@ -13,6 +13,8 @@ npm start
 
 Abra http://localhost:3000 no navegador. Para desenvolvimento, use `npm run dev`; o servidor reinicia quando os arquivos do backend mudam.
 
+O banco sem usuários é inicializado com o usuário `admin` e a senha `admin`. Para definir outras credenciais iniciais, configure `ADMIN_USERNAME` e `ADMIN_PASSWORD` antes de criar o banco. Troque os valores padrão antes de disponibilizar a aplicação em uma rede.
+
 Para executar os testes automatizados da API:
 
 ```bash
@@ -26,6 +28,7 @@ Por padrão, o servidor usa a porta 3000. Para escolher outra porta, defina a va
 - **Visão geral:** acompanha a quantidade e o valor dos pedidos por mês, com gráficos e seleção do período analisado.
 - **Criar Pedido:** permite informar cliente, datas, itens e dados da empresa, incluindo uma logo PNG ou JPG. Mostra o ticket em tempo real, permite salvar o pedido e escolher a largura da bobina (80 mm ou 48 mm) e o formato de exportação (PDF ou PNG). Também é possível imprimir o ticket.
 - **Histórico de Pedidos:** exibe os pedidos agrupados por data, com atalhos para Hoje, Amanhã, Esta semana, Este mês ou Todos. Permite filtrar pela data do pedido ou da entrega, definir um período e buscar por cliente. Ao abrir um pedido, é possível alterar os dados, exportar ou imprimir o ticket e apagar o registro.
+- **Configurações:** disponível apenas para administradores. Permite cadastrar e apagar usuários, definir quais contas são administradoras e consultar a lista de usuários. O administrador principal é protegido e nenhum usuário pode apagar a própria conta. Usuários comuns acessam somente Visão geral, Criar Pedido e Histórico de Pedidos.
 
 ## Estrutura
 
@@ -36,15 +39,19 @@ src/
   app.js               configuração do Express e arquivos estáticos
   db.js                inicialização do SQLite e criação das tabelas
   validacao.js         validação dos pedidos e dados da empresa
+  senhas.js            hash e verificação segura de senhas
   pedidos.repo.js      operações de pedidos no banco
+  usuarios.repo.js     autenticação e acesso aos usuários
   routes/
     empresa.js         rotas dos dados da empresa
     pedidos.js         rotas dos pedidos
+    usuarios.js        rotas administrativas de usuários
 public/
   index.html           estrutura das telas
   css/style.css        estilos da aplicação
   js/                  navegação, dashboard, criação, histórico, ticket,
-                       exportação PDF/PNG, empresa, API e utilitários
+                       configurações, login, exportação PDF/PNG, empresa, API
+  login.html           página de autenticação
   vendor/              bibliotecas locais jsPDF e html2canvas e suas licenças
 tests/
   api.test.js          testes automatizados da API (npm test)
@@ -58,6 +65,13 @@ data/
 |---|---|---|
 | GET | `/api/empresa` | Consulta nome e logo da empresa |
 | PUT | `/api/empresa` | Atualiza nome e logo da empresa |
+| GET | `/api/auth/branding` | Consulta pública do nome e logo exibidos na tela de login |
+| POST | `/api/auth/login` | Inicia sessão com nome de usuário e senha |
+| POST | `/api/auth/logout` | Encerra a sessão atual |
+| GET | `/api/auth/me` | Consulta o usuário e sua permissão na sessão atual |
+| GET | `/api/usuarios` | Lista usuários (somente administradores) |
+| POST | `/api/usuarios` | Cadastra usuário (somente administradores) |
+| DELETE | `/api/usuarios/:id` | Apaga usuário (somente administradores; protege o administrador principal e impede autoexclusão) |
 | GET | `/api/pedidos` | Lista pedidos; aceita filtros por período e tipo de data |
 | GET | `/api/pedidos/:id` | Consulta um pedido pelo ID |
 | POST | `/api/pedidos` | Cria um pedido |
@@ -81,4 +95,4 @@ Formato do pedido:
 
 ## Backup
 
-Os pedidos e os dados da empresa ficam no arquivo `data/doceria.db`, criado automaticamente na primeira execução. Para fazer backup, pare o servidor e copie esse arquivo. O diretório pode ser alterado pela variável de ambiente `DATA_DIR`.
+Pedidos, usuários e dados da empresa ficam no arquivo `data/doceria.db`, criado automaticamente na primeira execução. As senhas são armazenadas como hashes. Para fazer backup, pare o servidor e copie esse arquivo. O diretório pode ser alterado pela variável de ambiente `DATA_DIR`.

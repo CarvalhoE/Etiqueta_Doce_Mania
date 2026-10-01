@@ -13,11 +13,13 @@
   <nav class="navbar">
     <div class="marca">
       <img id="navLogo" alt="" hidden>
-      <span id="navNome">Doceria</span>
+      <span id="navNome">Empresa</span>
     </div>
     <button type="button" data-view="inicio" class="ativo">Visão geral</button>
     <button type="button" data-view="criar">Criar Pedido</button>
     <button type="button" data-view="historico">Histórico de Pedidos</button>
+    <button type="button" id="navConfiguracoes" data-view="configuracoes" hidden>Configurações</button>
+    <button type="button" id="logout" class="navbar-sair">Sair</button>
   </nav>
 
   <main>
@@ -205,6 +207,49 @@
           </table>
         </div>
         <div id="histVazio" class="vazio" hidden></div>
+      </div>
+    </section>
+
+    <section id="view-configuracoes" class="view">
+      <div class="card">
+        <div class="config-cab">
+          <div>
+            <p class="dash-sobretitulo">ADMINISTRAÇÃO</p>
+            <h1>Configurações</h1>
+          </div>
+        </div>
+
+        <div class="config-grid">
+          <form id="formUsuario" class="config-form">
+            <h2>Adicionar usuário</h2>
+            <label for="novoUsuarioNome">Nome</label>
+            <input id="novoUsuarioNome" name="nome" maxlength="80" autocomplete="off" required>
+
+            <label for="novoUsuarioSenha">Senha</label>
+            <input id="novoUsuarioSenha" name="senha" type="password" minlength="6" maxlength="128" autocomplete="new-password" required>
+
+            <label class="config-permissao" for="novoUsuarioAdmin">
+              <input id="novoUsuarioAdmin" name="admin" type="checkbox">
+              <span>Administrador</span>
+            </label>
+
+            <button class="btn prim" type="submit">Adicionar usuário</button>
+            <p id="usuarioStatus" class="config-status" role="status" aria-live="polite" hidden></p>
+          </form>
+
+          <section class="config-usuarios" aria-labelledby="tituloUsuarios">
+            <h2 id="tituloUsuarios">Usuários cadastrados</h2>
+            <div class="tabela-wrap">
+              <table class="tabela">
+                <thead>
+                  <tr><th>Nome</th><th>Permissão</th><th>Ações</th></tr>
+                </thead>
+                <tbody id="tabelaUsuarios"></tbody>
+              </table>
+            </div>
+            <p id="usuariosVazio" class="vazio" hidden>Nenhum usuário cadastrado.</p>
+          </section>
+        </div>
       </div>
     </section>
   </main>

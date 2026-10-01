@@ -1,0 +1,100 @@
+:root {
+  --rosa: #d6336c;
+  --rosa-esc: #b02456;
+  --rosa-claro: #fff0f5;
+  --texto: #3b2a30;
+  --texto-suave: #8a6b75;
+  --borda: #f0d4de;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  min-width: 320px;
+  min-height: 100vh;
+  margin: 0;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  background: linear-gradient(145deg, #fff8fa 0%, #fff 55%, #ffeaf1 100%);
+  color: var(--texto);
+  font-family: "Segoe UI", system-ui, sans-serif;
+}
+
+.login-pagina { width: min(100%, 420px); }
+
+.login-painel {
+  padding: 34px;
+  border: 1px solid var(--borda);
+  border-top: 4px solid var(--rosa);
+  border-radius: 8px;
+  background: #fff;
+  box-shadow: 0 16px 48px rgba(91, 37, 58, .09);
+}
+
+.login-marca,
+.login-marca-fallback {
+  display: grid;
+  width: 64px;
+  height: 64px;
+  margin-inline: auto;
+  place-items: center;
+  border: 1px solid var(--borda);
+  border-radius: 8px;
+  background: var(--rosa-claro);
+  color: var(--rosa-esc);
+  font-size: 15px;
+  font-weight: 800;
+}
+
+.login-marca { object-fit: contain; }
+[hidden] { display: none !important; }
+
+.login-sobretitulo {
+  margin: 22px 0 6px;
+  color: var(--texto-suave);
+  font-size: 11px;
+  font-weight: 700;
+  text-align: center;
+}
+
+h1 { margin: 0; color: var(--rosa-esc); font-size: 25px; text-align: center; }
+form { margin-top: 30px; }
+h2 { margin: 0 0 20px; font-size: 17px; text-align: center; }
+label { display: block; margin: 14px 0 5px; font-size: 13px; font-weight: 600; }
+
+input {
+  width: 100%;
+  min-height: 44px;
+  padding: 10px 12px;
+  border: 1px solid var(--borda);
+  border-radius: 6px;
+  background: #fff;
+  color: var(--texto);
+  font: inherit;
+}
+
+input:focus { outline: 2px solid var(--rosa); outline-offset: 1px; }
+
+button {
+  width: 100%;
+  min-height: 44px;
+  margin-top: 20px;
+  border: 0;
+  border-radius: 6px;
+  background: var(--rosa);
+  color: #fff;
+  cursor: pointer;
+  font: inherit;
+  font-weight: 700;
+}
+
+button:hover { background: var(--rosa-esc); }
+button:focus-visible { outline: 3px solid #6c213d; outline-offset: 2px; }
+button:disabled { cursor: wait; opacity: .65; }
+.login-erro { margin: 14px 0 0; color: #b3261e; font-size: 13px; }
+
+@media (max-width: 480px) {
+  body { padding: 16px; }
+  .login-painel { padding: 26px 22px; }
+}

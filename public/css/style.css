@@ -58,6 +58,7 @@ body {
 }
 .navbar button:hover { opacity: 1; }
 .navbar button.ativo { opacity: 1; border-bottom-color: #fff; font-weight: 600; }
+.navbar button.navbar-sair { margin-left: auto; opacity: 1; }
 
 /* ---------- Layout ---------- */
 main { max-width: 1150px; margin: 24px auto; padding: 0 16px; }
@@ -305,3 +306,18 @@ dialog#modalPedido::backdrop { background: rgba(59, 42, 48, .55); }
 .btn.perigo.cheio { background: #b3261e; color: #fff; border-color: #b3261e; }
 .btn.perigo.cheio:hover { background: #8c1d18; }
 .aviso-apagar { font-weight: 600; color: #b3261e; }
+
+/* ---------- Configurações ---------- */
+.config-cab h1 { margin: 0; color: var(--rosa-esc); font-size: 26px; }
+.config-grid { display: grid; grid-template-columns: minmax(240px, 340px) minmax(0, 1fr); gap: 32px; margin-top: 24px; padding-top: 22px; border-top: 1px solid var(--borda); }
+.config-form h2, .config-usuarios h2 { margin: 0 0 16px; font-size: 17px; }
+.config-permissao { display: flex; align-items: center; gap: 10px; margin-top: 18px; }
+.config-permissao input { width: 17px; height: 17px; margin: 0; accent-color: var(--rosa); }
+.config-form .btn { margin-top: 18px; }
+.config-status { margin: 12px 0 0; color: var(--texto-suave); font-size: 13px; }
+.config-usuarios { min-width: 0; }
+.config-usuarios .tabela th:last-child, .config-usuarios .tabela td:last-child { text-align: right; }
+.config-usuarios .tabela td:first-child { font-weight: 600; }
+.usuario-apagar { padding: 6px 10px; font-size: 12px; }
+.usuario-protegido { color: var(--texto-suave); font-size: 12px; }
+@media (max-width: 760px) { .config-grid { grid-template-columns: 1fr; gap: 28px; } }
