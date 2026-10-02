@@ -3,9 +3,13 @@ const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const os = require('node:os');
 const path = require('node:path');
+const Database = require('better-sqlite3');
 
 // O banco de teste fica numa pasta temporária, criada antes de carregar o app
 process.env.DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), 'doceria-test-'));
+const bancoLegado = new Database(path.join(process.env.DATA_DIR, 'doceria.db'));
+bancoLegado.exec("CREATE TABLE dados_legados (valor TEXT); INSERT INTO dados_legados VALUES ('preservado')");
+bancoLegado.close();
 const app = require('../src/app');
 
 let server, base;
@@ -35,6 +39,15 @@ const pedidoValido = () => ({
     { nome: 'Brigadeiro gourmet', qtd: 20, valor: 3.5 },
     { nome: 'Bolo de pote', qtd: 2, valor: 12.9 },
   ],
+});
+
+test('banco: migra o arquivo legado mantendo os dados', () => {
+  const bancoPath = path.join(process.env.DATA_DIR, 'GerenciamentoDB.db');
+  assert.equal(fs.existsSync(bancoPath), true);
+  assert.equal(fs.existsSync(path.join(process.env.DATA_DIR, 'doceria.db')), false);
+  const banco = new Database(bancoPath);
+  assert.equal(banco.prepare('SELECT valor FROM dados_legados').get().valor, 'preservado');
+  banco.close();
 });
 
 test('autenticação: protege a aplicação e libera acesso após login', async () => {

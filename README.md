@@ -1,10 +1,7 @@
 # Gerenciamento Empresa
-
-<<<<<<< HEAD
 Aplicação web para acompanhar pedidos da doceria, gerar tickets para bobinas térmicas e manter os dados salvos em um banco SQLite local. Os tickets podem ser exportados em PDF ou PNG, ou enviados para impressão. O histórico permite imprimir vários pedidos em bobina térmica ou em folha A4, lado a lado.
 =======
 Aplicação web para acompanhar pedidos, gerar tickets para bobinas térmicas e manter os dados salvos em um banco SQLite local. Os tickets podem ser exportados em PDF ou PNG, ou enviados para impressão.
->>>>>>> e652c5d63fb68e3b438977ae946b20d4ec0a11f9
 
 ## Como rodar
 
@@ -60,7 +57,7 @@ public/
 tests/
   api.test.js          testes automatizados da API (npm test)
 data/
-  doceria.db           banco SQLite criado automaticamente
+  GerenciamentoDB.db   banco SQLite criado automaticamente
 ```
 
 ## API
@@ -99,4 +96,4 @@ Formato do pedido:
 
 ## Backup
 
-Pedidos, usuários e dados da empresa ficam no arquivo `data/doceria.db`, criado automaticamente na primeira execução. As senhas são armazenadas como hashes. Para fazer backup, pare o servidor e copie esse arquivo. O diretório pode ser alterado pela variável de ambiente `DATA_DIR`.
+Pedidos, usuários e dados da empresa ficam no arquivo `data/GerenciamentoDB.db`, criado automaticamente na primeira execução. Se `data/doceria.db` existir, ele e seus arquivos auxiliares SQLite serão renomeados na inicialização, preservando os dados. As senhas são armazenadas como hashes. Para fazer backup, pare o servidor e copie esse arquivo. O diretório pode ser alterado pela variável de ambiente `DATA_DIR`.

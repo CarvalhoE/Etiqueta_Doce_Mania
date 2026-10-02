@@ -6,7 +6,25 @@ const { hashSenha } = require('./senhas');
 const dir = process.env.DATA_DIR || path.join(__dirname, '..', 'data');
 fs.mkdirSync(dir, { recursive: true });
 
-const db = new Database(path.join(dir, 'doceria.db'));
+const dbPath = path.join(dir, 'GerenciamentoDB.db');
+const dbLegadoPath = path.join(dir, 'doceria.db');
+if (!fs.existsSync(dbPath) && fs.existsSync(dbLegadoPath)) {
+  const arquivos = [dbLegadoPath, `${dbLegadoPath}-wal`, `${dbLegadoPath}-shm`];
+  const movidos = [];
+  try {
+    for (const origem of arquivos) {
+      if (!fs.existsSync(origem)) continue;
+      const destino = origem.replace(dbLegadoPath, dbPath);
+      fs.renameSync(origem, destino);
+      movidos.push([destino, origem]);
+    }
+  } catch (erro) {
+    for (const [destino, origem] of movidos.reverse()) fs.renameSync(destino, origem);
+    throw erro;
+  }
+}
+
+const db = new Database(dbPath);
 db.pragma('journal_mode = WAL');
 db.pragma('foreign_keys = ON');
 
