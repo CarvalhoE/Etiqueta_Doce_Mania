@@ -168,7 +168,7 @@ function imprimirSelecionados() {
   const largura = formato === 'a4' ? 80 : parseInt(formato, 10);
   const area = $('#impressaoMultipla');
   area.innerHTML = pedidos.map(p => `<div class="ticket w${largura}">${ticketHTML(p, empresa)}</div>`).join('');
-  area.hidden = false;
+  area.hidden = true;
 
   const estilo = document.createElement('style');
   estilo.media = 'print';

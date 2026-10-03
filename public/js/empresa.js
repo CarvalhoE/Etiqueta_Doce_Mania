@@ -11,6 +11,14 @@ function aplicar() {
   $('#navNome').textContent = empresa.nome || 'Empresa';
   const img = $('#navLogo');
   if (empresa.logo) { img.src = empresa.logo; img.hidden = false; } else { img.hidden = true; }
+  const favicon = $('#favicon');
+  if (empresa.logo) {
+    favicon.href = empresa.logo;
+    favicon.type = empresa.logo.startsWith('data:image/png') ? 'image/png' : 'image/jpeg';
+  } else {
+    favicon.removeAttribute('href');
+    favicon.removeAttribute('type');
+  }
   aoMudar();
 }
 
